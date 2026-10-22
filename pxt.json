@@ -1,0 +1,22 @@
+{
+  "name": "robot-procedures-demo",
+  "version": "0.1.0",
+  "description": "Playable complete reference game, temporary geometric artwork.",
+  "dependencies": {
+    "device": "*"
+  },
+  "files": [
+    "config.ts",
+    "data/trials.ts",
+    "arena.ts",
+    "main.ts",
+    "bootstrap.ts",
+    "README.md",
+    "NOTICE.md"
+  ],
+  "preferredEditor": "blocksprj",
+  "supportedTargets": [
+    "arcade"
+  ],
+  "testDependencies": {}
+}
