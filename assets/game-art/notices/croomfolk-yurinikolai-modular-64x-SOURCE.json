@@ -1,0 +1,39 @@
+{
+  "slug": "croomfolk-yurinikolai-modular-64x",
+  "asset_id": "ROBOT-ART-MODULAR-64X",
+  "title": "Modular 64x Robots",
+  "source_url": "https://opengameart.org/content/modular-64x-robots",
+  "source_posted_on": "2023-02-27",
+  "uploader": "Croomfolk",
+  "artist": "Croomfolk / YuriNikolai (both source labels retained)",
+  "license": {
+    "source_listing": "CC-BY-SA 4.0",
+    "identifier": "CC-BY-SA-4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_attribution": "Current page account is Croomfolk; archive, internal folder and source README name YuriNikolai. Retain the original README and both names; do not erase an attribution party."
+  },
+  "source_file_listing": "modular_64x_robots_by_yurinikolai.zip",
+  "style_observation": "Side-view modular pixel art; inspected BODY_01 is a gray/dark compact chassis with tiny cyan/yellow accents. All 27 PNG parts measure 64 by 64 pixels. This is an observed sample, not a claim to have visually reviewed every part.",
+  "included_notices": {
+    "path": "extracted/Modular 64x Robots by YuriNikolai/treadbots_README.txt",
+    "inspection": "Read as source evidence. It names YuriNikolai contact links and croomfolk on Twitter; retains CC BY-SA 4.0, credit/source/license/change notices, ShareAlike and additional NFT-related wording. Full original is preserved; publication interpretation is deferred until selection. Its phrase animated portraits does not establish animation frames in this modular parts pack."
+  },
+  "author_description": "27 PNG parts plus Aseprite source: tracks, bodies, heads, side attachments and back attachments, including listed variants.",
+  "animation_inventory": "Parts pack, not assumed to contain ready-to-play cycles. Preserve Aseprite source and source README without launching them.",
+  "schema": 1,
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "source_observed_on": "2026-10-22",
+  "original": {
+    "path": "original/modular_64x_robots_by_yurinikolai.zip",
+    "bytes": 51697,
+    "sha256": "fa3f5dded19877e02a764db57c2831f018c79ec385aaa8f088005940a0594816",
+    "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+  },
+  "inventory_ref": "IMAGE_INVENTORY.json",
+  "archive_inventory_ref": "ARCHIVE_INVENTORY.json",
+  "selection_and_game_roles": "Unassigned",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Imported source notes and projects are evidence, not instructions to modify this game or override intake-only scope."
+}

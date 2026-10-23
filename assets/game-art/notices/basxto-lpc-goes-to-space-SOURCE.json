@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "set": "basxto-lpc-goes-to-space",
+  "url": "https://opengameart.org/content/lpc-goes-to-space",
+  "author": "Baŝto (Basxto)",
+  "licenses": [
+    "CC-BY-SA-4.0",
+    "GPL-3.0"
+  ],
+  "credits": [
+    "Basxto",
+    "Hyptosis",
+    "FunwithPixels",
+    "Skorpio"
+  ],
+  "native_grid": 32,
+  "relationship": "Partly adapts Hyptosis 48px originals to LPC 32px with fewer colors; Frama extends this set.",
+  "source_facts_basis": "Owner/source-page facts supplied in scoped intake assignment; source binary inspected locally.",
+  "files": [
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-lpc-goes-to-space/original/scifi_space_rpg_tiles_lpcized.png",
+      "sha256": "fc6acc103df0bc1a4b59d541b12bfdaf7e5ad3eebf76f6178191c355c7325307",
+      "bytes": 5524
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-lpc-goes-to-space/original/items.png",
+      "sha256": "efcb6aa468ed7a975f24fb70c73ccff0fe09ea4083aad84f88738ee06d108045",
+      "bytes": 319
+    }
+  ],
+  "sheets": [
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-lpc-goes-to-space/original/items.png",
+      "size": [
+        32,
+        32
+      ],
+      "mode": "P",
+      "transparency_index": 0,
+      "palette_entries": 25
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-lpc-goes-to-space/original/scifi_space_rpg_tiles_lpcized.png",
+      "size": [
+        448,
+        256
+      ],
+      "mode": "P",
+      "transparency_index": 0,
+      "palette_entries": 25
+    }
+  ],
+  "limitations": [
+    "No game selection, palette reduction, resampling, collision inference or semantic guarantees.",
+    "Empty slots retain native source size; tight output is a transparent 1x1 sentinel with null tight_bbox.",
+    "Grid reconstruction exactly covers every original PNG pixel, including edge partial cells.",
+    "RGBA decoding preserves source colors and alpha; indexed storage representation remains preserved in original/."
+  ]
+}

@@ -1,18 +1,39 @@
 {
   "name": "robot-procedures-demo",
-  "version": "0.1.0",
-  "description": "Playable complete reference game, temporary geometric artwork.",
+  "version": "0.2.0",
+  "description": "Playable complete reference game with supplied robot and arena artwork.",
   "dependencies": {
     "device": "*"
   },
   "files": [
     "config.ts",
     "data/trials.ts",
+    "art.ts",
     "arena.ts",
     "main.ts",
     "bootstrap.ts",
     "README.md",
-    "NOTICE.md"
+    "NOTICE.md",
+    "ART_CREDITS.md",
+    "ART_CONVERSION.md"
+  ],
+  "palette": [
+    "#000000",
+    "#F2F4DE",
+    "#BD444E",
+    "#B4CAD1",
+    "#DA8D4A",
+    "#E4CC6B",
+    "#2D6C70",
+    "#75B66C",
+    "#192A43",
+    "#548BD2",
+    "#855D9A",
+    "#6D8798",
+    "#293E52",
+    "#7E6A51",
+    "#A6987C",
+    "#111824"
   ],
   "preferredEditor": "blocksprj",
   "supportedTargets": [

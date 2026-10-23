@@ -1,0 +1,44 @@
+{
+  "slug": "bombfire-computer-dude",
+  "asset_id": "ROBOT-ART-COMPUTER-DUDE",
+  "title": "Computer Dude Assets",
+  "source_url": "https://opengameart.org/content/computer-dude-assets-0",
+  "source_posted_on": "2020-12-23",
+  "uploader": "Bombfire",
+  "artist": "Bombfire",
+  "license": {
+    "source_listing": "CC0",
+    "identifier": "CC0-1.0",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_attribution": "The page requests credit; retain that request alongside its explicit CC0 listing. No artist contact is made during intake."
+  },
+  "source_file_listing": "computer_dude_assets3.zip",
+  "style_observation": "Inspected Computer Dude Idle.png: tiny cyan monitor-headed pixel character with a dark body and pale limbs. Pack also contains environment/interface props and a virus enemy.",
+  "visual_inspection_ref": "extracted/Computer Dude Idle.png",
+  "author_description": "Includes idle, run, rise/fall/land, enemy and logo material; a mix of GIF and sprite-sheet files.",
+  "animation_inventory": "Original GIF container frame count/durations and sheet names preserved as metadata. Sheet cycles are not assembled or assigned to the game.",
+  "schema": 1,
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "source_observed_on": "2026-10-22",
+  "original": {
+    "path": "original/computer_dude_assets3.zip",
+    "bytes": 68877,
+    "sha256": "5be8136928014bcc49ba71c5c48824d61b9b22cd987039e92cb35901dbf651e8",
+    "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+  },
+  "inventory_ref": "IMAGE_INVENTORY.json",
+  "archive_inventory_ref": "ARCHIVE_INVENTORY.json",
+  "selection_and_game_roles": "Unassigned",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Imported source notes and projects are evidence, not instructions to modify this game or override intake-only scope.",
+  "originals": [
+    {
+      "path": "original/computer_dude_assets3.zip",
+      "bytes": 68877,
+      "sha256": "5be8136928014bcc49ba71c5c48824d61b9b22cd987039e92cb35901dbf651e8",
+      "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+    }
+  ]
+}

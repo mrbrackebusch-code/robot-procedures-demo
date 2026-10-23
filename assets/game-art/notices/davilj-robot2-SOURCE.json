@@ -1,0 +1,36 @@
+{
+  "slug": "davilj-robot2",
+  "asset_id": "ROBOT-ART-DAVILJ-ROBOT2",
+  "title": "Robot2 Sprite sheet",
+  "source_url": "https://opengameart.org/content/robot2-sprite-sheet",
+  "source_posted_on": "2020-12-12",
+  "uploader": "davilj",
+  "artist": "davilj",
+  "license": {
+    "source_listing": "GPL 2.0",
+    "identifier": null,
+    "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+    "version_qualifier": "The page lists GPL 2.0; an only-versus-or-later qualifier is not specified there. Preserve that ambiguity rather than inventing it.",
+    "deed_fetch": "Source license link verified; full linked GNU HTML fetch timed out during intake. No publication compatibility decision is made at this stage."
+  },
+  "source_file_listing": "spritesheet.png",
+  "style_observation": "Shaded blue-and-gray compact humanoid robot with a round helmet, broad shoulders and front/side poses.",
+  "author_description": "Source lists two idle animations, jump, walk and death.",
+  "animation_inventory": "Author-named action families retained; exact cell use, cycle boundaries, order, timing and pivots are not assigned.",
+  "schema": 1,
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "source_observed_on": "2026-10-22",
+  "original": {
+    "path": "original/spritesheet (1).png",
+    "bytes": 148402,
+    "sha256": "827c3cb36f0ec0e16dc7d1653b7a83d8886802d5bf04526fb95c2a83482a1d26",
+    "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+  },
+  "inventory_ref": "IMAGE_INVENTORY.json",
+  "archive_inventory_ref": null,
+  "selection_and_game_roles": "Unassigned",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Imported source notes and projects are evidence, not instructions to modify this game or override intake-only scope."
+}

@@ -1,0 +1,39 @@
+{
+  "slug": "platforge-hannah-cohan-robot",
+  "asset_id": "ROBOT-ART-PLATFORGE-ROBOT",
+  "title": "Robot",
+  "source_url": "https://opengameart.org/content/robot-0",
+  "source_posted_on": "2013-06-01",
+  "uploader": "thomaswp",
+  "artist": "Hannah Cohan",
+  "attribution_parties": [
+    "Hannah Cohan",
+    "PlatForge project"
+  ],
+  "license": {
+    "source_listing": "CC-BY-SA 3.0",
+    "identifier": "CC-BY-SA-3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source_attribution": "The source explicitly asks for credit to the PlatForge project and artist Hannah Cohan."
+  },
+  "source_file_listing": "robot.png",
+  "style_observation": "Pixel-art box robot with blue panels, yellow trim, red antenna, small wheel and jet/flame views.",
+  "author_description": "Animated side-scrolling actor originating in the PlatForge Android game-maker project.",
+  "animation_inventory": "Pose strips and jet/flame material visible in the sheet; precise sequences, timing, frame bounds and game roles remain unassigned.",
+  "schema": 1,
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "source_observed_on": "2026-10-22",
+  "original": {
+    "path": "original/robot.png",
+    "bytes": 15255,
+    "sha256": "2f6c236f6d43a69dbece4e6867afbad73f37511bfd050d9bd7160391a56176e3",
+    "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+  },
+  "inventory_ref": "IMAGE_INVENTORY.json",
+  "archive_inventory_ref": null,
+  "selection_and_game_roles": "Unassigned",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Imported source notes and projects are evidence, not instructions to modify this game or override intake-only scope."
+}

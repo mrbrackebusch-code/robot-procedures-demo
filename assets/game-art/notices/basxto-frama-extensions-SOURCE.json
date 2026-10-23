@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "set": "basxto-frama-extensions",
+  "url": "https://opengameart.org/content/lpc-frama-sci-fi-extensions",
+  "author": "Baŝto (Basxto)",
+  "licenses": [
+    "CC-BY-SA-4.0",
+    "GPL-3.0"
+  ],
+  "credits": [
+    "Basxto",
+    "Wonko",
+    "Hyptosis",
+    "FunwithPixels",
+    "Skorpio"
+  ],
+  "native_grid": 32,
+  "relationship": "Extends LPC Goes to Space; related derivative family, not an independent art style.",
+  "source_facts_basis": "Owner/source-page facts supplied in scoped intake assignment; source binary inspected locally.",
+  "files": [
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/frama_scifi_extension.zip",
+      "sha256": "67ca176eefccb2ddb2c85099738e9d4f8f72fbbfdf6ff4ca7f614dd2aae80d99",
+      "bytes": 15556
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/scifi_hackspace_frama.png",
+      "sha256": "8886928e7974093676425aab200c3e0dfddb1377c9966aa0bb3c90f9957ac9a5",
+      "bytes": 4399
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/double_hammock.png",
+      "sha256": "2299beaff3556a9b0aa4dc48cf32db7bdf143f2c3d69b479de1f7eec0b8ebd02",
+      "bytes": 2350
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/exit.gif",
+      "sha256": "0353b8437d60b1710b14ddcfa246aa015d7403cfc770649bbcba186f61798c73",
+      "bytes": 1024,
+      "zip_crc32": "58ececf1"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/icons.gif",
+      "sha256": "ffd44a11eab9f8b4e36f7ae3a328a7d22ec3ff05959ed866e572fc98c8c2e81b",
+      "bytes": 1037,
+      "zip_crc32": "7b98a266"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/leds.gif",
+      "sha256": "49f7a0f835b35afef947f595ac42f90b023099fd21315ef3253f30f728920567",
+      "bytes": 5259,
+      "zip_crc32": "9660df9a"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/ledwall.gif",
+      "sha256": "a25425d4b037cdaffb11612f6a0e5be3d12085f3de7141ae1c5c9b3f805a86ce",
+      "bytes": 2368,
+      "zip_crc32": "b9ef408f"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/obelisk.gif",
+      "sha256": "c5c010d0a21917048a1b1c9bb43ea31f733c72e128a9dea0945c69c9150a9fb7",
+      "bytes": 3590,
+      "zip_crc32": "7fc629c4"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/scifi_hackspace_frama.png",
+      "sha256": "8886928e7974093676425aab200c3e0dfddb1377c9966aa0bb3c90f9957ac9a5",
+      "bytes": 4399,
+      "zip_crc32": "ada876db"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/preview.tmx",
+      "sha256": "e559ff89b4ce215db56575241d8ae7212c5822d5c32c65898b4248ab944796ec",
+      "bytes": 5852,
+      "zip_crc32": "778b5b15"
+    },
+    {
+      "path": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/animate.sh",
+      "sha256": "f07f2a723c07feee44218a9e0187230e95e5bb7190bd6a1338a9909b143329f2",
+      "bytes": 4865,
+      "zip_crc32": "d01e312f"
+    }
+  ],
+  "archive_crc_verified": true,
+  "duplicate_png_byte_equal": true,
+  "sheets": [
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/double_hammock.png",
+      "size": [
+        128,
+        96
+      ],
+      "mode": "RGBA",
+      "transparency_index": null,
+      "palette_entries": null
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/scifi_hackspace_frama.png",
+      "size": [
+        352,
+        288
+      ],
+      "mode": "P",
+      "transparency_index": 0,
+      "palette_entries": 19
+    }
+  ],
+  "animations": [
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/exit.gif",
+      "canvas": [
+        64,
+        64
+      ],
+      "frames": 2,
+      "durations_ms": [
+        600,
+        100
+      ],
+      "loop": 0
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/icons.gif",
+      "canvas": [
+        32,
+        96
+      ],
+      "frames": 2,
+      "durations_ms": [
+        600,
+        600
+      ],
+      "loop": 0
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/leds.gif",
+      "canvas": [
+        192,
+        64
+      ],
+      "frames": 6,
+      "durations_ms": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      "loop": 0
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/ledwall.gif",
+      "canvas": [
+        64,
+        96
+      ],
+      "frames": 6,
+      "durations_ms": [
+        400,
+        400,
+        400,
+        400,
+        600,
+        200
+      ],
+      "loop": 0
+    },
+    {
+      "source": "games/robot-procedures/assets/tilesets/basxto-frama-extensions/original/extracted/frama_scifi_extension/obelisk.gif",
+      "canvas": [
+        32,
+        128
+      ],
+      "frames": 7,
+      "durations_ms": [
+        1600,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": 0
+    }
+  ],
+  "tmx_animation_records": 0,
+  "limitations": [
+    "No game selection, palette reduction, resampling, collision inference or semantic guarantees.",
+    "Empty slots retain native source size; tight output is a transparent 1x1 sentinel with null tight_bbox.",
+    "Grid reconstruction exactly covers every original PNG pixel, including edge partial cells.",
+    "RGBA decoding preserves source colors and alpha; indexed storage representation remains preserved in original/."
+  ]
+}

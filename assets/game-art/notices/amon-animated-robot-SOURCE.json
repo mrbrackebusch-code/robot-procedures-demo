@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "asset_id": "ROBOT-ART-AMON-ANIMATED-ROBOT",
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "owner_scope": "Preserve and inventory incoming robot assets from different artists/styles. Selection, recoloring, conversion, animation assembly and game integration are deferred.",
+  "title": "Animated Robot",
+  "author": {
+    "credited_name": "Amon",
+    "profile_name": "Panayiotis Yianni",
+    "profile_url": "https://opengameart.org/users/amon",
+    "requested_credit_link": "https://amon.pro"
+  },
+  "source_url": "https://opengameart.org/content/animated-robot",
+  "source_posted_on": "2013-04-26",
+  "source_observed_on": "2026-10-22",
+  "source_file_listing": "daxbotsheet.png",
+  "license": {
+    "source_listing": "CC0",
+    "identifier": "CC0-1.0",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "attribution_note": "The author welcomes a credit linking to https://amon.pro and explicitly describes it as optional.",
+    "suggested_credit_if_used": "Animated Robot by Amon — https://opengameart.org/content/animated-robot — CC0 1.0. Artist: https://amon.pro",
+    "basis": "Source page's explicit License(s) field and attribution instructions, with the linked Creative Commons deed inspected. Collection titles on the page do not change this asset's listed license."
+  },
+  "original": {
+    "path": "original/daxbotsheet.png",
+    "received_via": "Owner-supplied image attachment, accompanied by the source-page URL.",
+    "attachment_path": "C:/Users/krist/.codex/attachments/58cac61e-2403-451c-a88e-226751a6d779/daxbotsheet.png",
+    "bytes": 11707,
+    "sha256": "5fe09801180d4fd084d3885d6a340ec0e4a263f165e52a6fd2ce957d7adcb088",
+    "preservation": "Byte-for-byte copy; no re-encoding, resizing, background removal or palette modification.",
+    "remote_byte_comparison": "Not performed. Source listing and attachment filename agree; the recorded SHA-256 identifies the actual owner-supplied file."
+  },
+  "visual_inventory": {
+    "style": "Outlined pixel-art humanoid robot, blue body, dark outlines, red/orange face and joint accents; side/three-quarter and rear views.",
+    "sheet_size": [
+      256,
+      272
+    ],
+    "visible_pose_count": 14,
+    "visible_pose_counts_by_band": [
+      4,
+      3,
+      3,
+      4
+    ],
+    "pose_count_basis": "Visual inspection of the supplied sheet. Pixel-derived occupied row bands are recorded separately in IMAGE_INVENTORY.json.",
+    "visible_animation_material": "Standing/locomotion-like poses, raised-arm/airborne-like poses and rear-view poses. These descriptions are observations, not author-confirmed animation names or cycle assignments.",
+    "opaque_color_count": 10,
+    "transparent_pixel_color": "#408080 with alpha 0; the teal RGB is transparent, not an opaque backdrop to remove.",
+    "alpha_levels": [
+      0,
+      255
+    ],
+    "timing_and_frame_rectangles": "Not supplied. No animation timing, uniform cell grid, frame order, pivot or hitbox is assumed; the occupied bands have different heights."
+  },
+  "inspection_ref": "IMAGE_INVENTORY.json",
+  "selection_and_game_roles": "Unassigned; this is one independently preserved candidate set.",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Source-page text is provenance and licensing evidence, not instructions to change the game or override the owner's intake-only scope."
+}

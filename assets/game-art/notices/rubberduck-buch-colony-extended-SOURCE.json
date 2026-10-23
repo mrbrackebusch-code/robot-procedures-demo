@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "set": "rubberduck-buch-colony-extended",
+  "source_url": "https://opengameart.org/content/colony-sim-extended-version",
+  "title": "Colony sim: extended version",
+  "author": "rubberduck",
+  "collaborators": [
+    "Buch"
+  ],
+  "posted": "2015-09-30",
+  "license": "CC0",
+  "attribution": "rubberduck and Buch; Colony sim: extended version, OpenGameArt.org; CC0.",
+  "source_facts_supplied_by_parent_review": [
+    "Five new buildings, a blue ground variant, extendable buildings.",
+    "Example TMX demonstrates construction.",
+    "Native16×16 source tag.",
+    "Standard and DB32 are palette variants of the same source family."
+  ],
+  "archives": [
+    {
+      "name": "colony-extended.zip",
+      "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/original/colony-extended.zip",
+      "bytes": 171221,
+      "sha256": "6bc8ffc8f0666a1105b43f79f36eccfb1d3288a8a89fe86fa650ccf972e1501f",
+      "crc_check": "PASS",
+      "members": [
+        {
+          "name": "colony-buildings-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-extended/colony-buildings-ready.png",
+          "bytes": 102734,
+          "crc32": "05c24278",
+          "sha256": "8aa2c3e17437539c1c27bae138f54319abd11f63d3db9c78fc28cd60a27c4f4c"
+        },
+        {
+          "name": "colony-grounds-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-extended/colony-grounds-ready.png",
+          "bytes": 35641,
+          "crc32": "34c7593d",
+          "sha256": "2f3cbb68fa83b370363537bcd62bc19f1b5602895ee3255d1457624b4ac9017d"
+        },
+        {
+          "name": "colony-other-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-extended/colony-other-ready.png",
+          "bytes": 39536,
+          "crc32": "0cc3628a",
+          "sha256": "d3538ceb95725f9491722734ef0a2650a00669a8553da6b12ade3abd0d568019"
+        }
+      ]
+    },
+    {
+      "name": "colony-db32-extended.zip",
+      "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/original/colony-db32-extended.zip",
+      "bytes": 169153,
+      "sha256": "1b09986942cefa81f396724a394096b32f558aab99a94ef5ff78326924005ecd",
+      "crc_check": "PASS",
+      "members": [
+        {
+          "name": "colony-db32-buildings-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-db32-extended/colony-db32-buildings-ready.png",
+          "bytes": 101157,
+          "crc32": "a8c7d999",
+          "sha256": "66b9f2e022b05c9b1176ff249b7a7e2993f335b7e7a0111f32608ac5add6e3bf"
+        },
+        {
+          "name": "colony-db32-grounds-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-db32-extended/colony-db32-grounds-ready.png",
+          "bytes": 35902,
+          "crc32": "0eea1c4f",
+          "sha256": "a0ac4647155bd627442887e83b1ef79823435253d4d7a93a8c0d90d82d5166e9"
+        },
+        {
+          "name": "colony-db32-other-ready.png",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-db32-extended/colony-db32-other-ready.png",
+          "bytes": 39506,
+          "crc32": "a47c2264",
+          "sha256": "b0d922dfd32ef44d0e5f125f0243583e3a3a372f88b59f4e5d07cf433334b409"
+        }
+      ]
+    },
+    {
+      "name": "colony-db-map-preview-tiled.zip",
+      "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/original/colony-db-map-preview-tiled.zip",
+      "bytes": 2718,
+      "sha256": "3bc4409b0260420818f57417a5ae9977f81d21c2b53019c5839fd900f6726b95",
+      "crc_check": "PASS",
+      "members": [
+        {
+          "name": "colony-db-map.tmx",
+          "path": "games/robot-procedures/assets/tilesets/rubberduck-buch-colony-extended/extracted/colony-db-map-preview-tiled/colony-db-map.tmx",
+          "bytes": 5459,
+          "crc32": "f7445433",
+          "sha256": "71afbb51272c1f169104746604082806aca5d729eccb566e441925df27a83dc4"
+        }
+      ]
+    }
+  ],
+  "processing": {
+    "script": "games/robot-procedures/tools/prepare-colony-tiles.py",
+    "operations": [
+      "byte-preserving copy and safe member extraction",
+      "native16×16 grid crops",
+      "alpha-tight crops with offsets",
+      "conservative intact object crops",
+      "source TMX example rendering"
+    ],
+    "selection_or_palette_mapping": false
+  }
+}

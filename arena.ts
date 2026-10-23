@@ -109,9 +109,15 @@ namespace arenaLab {
         path: number[]
         pathX: number
         pathY: number
+        previousX: number
+        previousY: number
+        faceLeft: boolean
+        visualStep: number
+        deathTick: number
         constructor(id: number, side: number, kind: number, x: number, y: number, module: number) {
             this.id = id; this.side = side; this.kind = kind; this.x = x; this.y = y
             this.nx = x; this.ny = y
+            this.previousX = x; this.previousY = y; this.faceLeft = side == 1; this.visualStep = 0; this.deathTick = -1
             this.maxHp = baseHp[kind]
             this.maxShield = baseShield[kind]
             this.speed = baseSpeed[kind]
@@ -451,7 +457,12 @@ namespace arenaLab {
         }
         for (let b of bots) {
             b.moving = distance(b.x, b.y, b.nx, b.ny) > 0.001
+            b.previousX = b.x; b.previousY = b.y
             b.x = b.nx; b.y = b.ny
+            if (b.moving) { b.visualStep++; if (Math.abs(b.x - b.previousX) > 0.05) b.faceLeft = b.x < b.previousX }
+            else b.visualStep = 0
+            let facingTarget = byId(b.target)
+            if (alive(b) && alive(facingTarget) && b.mode != 3 && Math.abs(facingTarget.x - b.x) > 0.5) b.faceLeft = facingTarget.x < b.x
             if (b.shot > 0) b.shot--
             if (b.hit > 0) b.hit--
         }
@@ -489,7 +500,7 @@ namespace arenaLab {
                 let absorbed = Math.min(b.shield, hits[i]); b.shield -= absorbed
                 b.hp = Math.max(0, b.hp - (hits[i] - absorbed)); b.lastHit = end; b.hit = 3
             } else if (b.lastHit >= 0 && end >= b.lastHit + b.regenDelay) b.shield = Math.min(b.maxShield, b.shield + b.regenRate * 0.05)
-            if (!alive(b)) { b.mode = 1; b.aim = 0; b.target = -1; b.ally = -1; b.status = "DISABLED"; appendLog("t" + tick + " #" + b.id + " disabled") }
+            if (!alive(b)) { b.mode = 1; b.aim = 0; b.shot = 0; b.hit = 0; b.moving = false; b.visualStep = 0; b.deathTick = tick; b.target = -1; b.ally = -1; b.status = "DISABLED"; appendLog("t" + tick + " #" + b.id + " disabled") }
         }
         tick++
         let f = 0; let e = 0; let fs = 0; let es = 0
@@ -509,7 +520,7 @@ namespace arenaLab {
         let count = battle == 0 ? 1 : 2
         for (let i = 0; i < count; i++) bots.push(new Bot(i + 1, 0, battle == 0 ? 1 : bayClasses[i], friendlySpawns[battle][i][0], friendlySpawns[battle][i][1], battle == 0 ? -1 : bayModules[i]))
         for (let i = 0; i < battleEnemies[battle].length; i++) bots.push(new Bot(i + 3, 1, battleEnemies[battle][i], enemySpawns[battle][i][0], enemySpawns[battle][i][1], -1))
-        countdown = 30; go("COUNTDOWN")
+        prepareArena(); countdown = 30; go("COUNTDOWN")
     }
     function finish(value: string): void {
         if (resultPaid) return
@@ -644,7 +655,7 @@ namespace arenaLab {
     function flash(s: string): void { notice = s; noticeTicks = 65 }
     function go(id: string): void { screenId = id; cursor = isReferenceDemo && id == "BATTLES" ? battle : isReferenceDemo && id == "TRAIN_SELECT" ? lesson - 1 : 0; reviewRow = 0 }
     function menuItems(): string[] {
-        if (screenId == "HUB") return isReferenceDemo ? ["Reference arenas / no campaign", "Practice supplied R06 code", "Reference program info", "Team / equipment", "Shop (student campaign only)", "Reference / controls / help", "Free sandbox arenas", "Reset reference session"] : ["Practice current code", "Battles / replay", "Current lesson", "Team / equipment", "Shop", "Progress / controls / save", highestCleared == 6 ? "Free scrimmage" : "Scrimmage (finish B06)", "Reset campaign"]
+        if (screenId == "HUB") return isReferenceDemo ? ["Reference arenas / no campaign", "Practice supplied R06 code", "Reference program info", "Team / equipment", "Shop (student campaign only)", "Reference / controls / help", "Free sandbox arenas", "Reset reference session", "Art / source credits"] : ["Practice current code", "Battles / replay", "Current lesson", "Team / equipment", "Shop", "Progress / controls / save", highestCleared == 6 ? "Free scrimmage" : "Scrimmage (finish B06)", "Reset campaign", "Art / source credits"]
         if (screenId == "TRAIN_SELECT") { let a: string[] = []; for (let i = 1; i <= (isReferenceDemo ? 6 : Math.min(6, highestCleared + 1)); i++) a.push("R0" + i + " controlled scenes"); return a }
         if (screenId == "TRAIN_PREVIEW") { let items = ["Run all with current code", "Review most recent results", "Policy target: R0" + policyTarget + "  < >"]; if (lesson == 6) { items.push("Guard15: limit18 duty=true"); items.push("Guard15: limit12 duty=true"); items.push("Guard20: limit18 duty=true"); items.push("Guard20: limit18 duty=false") }; return items }
         if (screenId == "TRAIN_RESULT") return ["Retry / change target", "Details of actual orders", "Return to lessons"]
@@ -667,8 +678,8 @@ namespace arenaLab {
         return []
     }
     function moveCursor(delta: number): void {
-        if (screenId == "TRAIN_REVIEW" || screenId == "RESULT_LOG" || screenId == "RECORD_HELP") {
-            let length = screenId == "TRAIN_REVIEW" ? trialModes.length : screenId == "RESULT_LOG" ? log.length : helpLines().length
+        if (screenId == "TRAIN_REVIEW" || screenId == "RESULT_LOG" || screenId == "RECORD_HELP" || screenId == "CREDITS") {
+            let length = screenId == "TRAIN_REVIEW" ? trialModes.length : screenId == "RESULT_LOG" ? log.length : screenId == "CREDITS" ? robotArt.credits().length : helpLines().length
             reviewRow = Math.constrain(reviewRow + delta, 0, Math.max(0, length - 1)); return
         }
         let list = menuItems()
@@ -680,6 +691,7 @@ namespace arenaLab {
         if (screenId == "TRAIN_PREVIEW") { policyTarget = (policyTarget - 1 + delta + 6) % 6 + 1; return }
     }
     function confirm(): void {
+        if (screenId == "CREDITS") { go("HUB"); return }
         if (screenId == "WELCOME" || screenId == "RECIPE_INFO") { go("HUB"); return }
         if (screenId == "SAVE_WARNING") { save(); go("HUB"); return }
         if (screenId == "HUB") {
@@ -690,7 +702,8 @@ namespace arenaLab {
             else if (cursor == 4) { if (isReferenceDemo) flash("Shop belongs to the student campaign. Reference uses base classes."); else go("SHOP") }
             else if (cursor == 5) go("RECORD_HELP")
             else if (cursor == 6) { if (isReferenceDemo || highestCleared == 6) go("SCRIMMAGE"); else flash("First clear all six battles.") }
-            else go("RESET")
+            else if (cursor == 7) go("RESET")
+            else go("CREDITS")
             return
         }
         if (screenId == "TRAIN_SELECT") { lesson = cursor + 1; policyTarget = isReferenceDemo ? 6 : Math.min(6, highestCleared + 1); go("TRAIN_PREVIEW"); return }
@@ -795,94 +808,202 @@ namespace arenaLab {
         trialVerdict = ok ? "ORDERS MATCH TARGET" : "REVIEW CURRENT ORDERS"
         trialIndex = 0; trialAnimation = 0; go("TRAIN_RUNNING")
     }
-    function text(s: string, x: number, y: number, color: number): void { screen.print(s, x, y, color, image.font8) }
-    function small(s: string, x: number, y: number, color: number): void { screen.print(s, x, y, color, image.font5) }
+    // Construct once: Arcade scales the actual font8 bitmap strokes, not just cells.
+    // Its multiplier path draws runs directly with fillRect, without Image allocations.
+    const uiFont = image.scaledFont(image.font8, 2)
+    function text(s: string, x: number, y: number, color: number): void { screen.print(s, x, y, color, uiFont) }
+    function small(s: string, x: number, y: number, color: number): void { screen.print(s, x, y, color, image.font8) }
+    function micro(s: string, x: number, y: number, color: number): void { screen.print(s, x, y, color, image.font5) }
     function wrapped(s: string, x: number, y: number, color: number, chars: number): number {
         let words = s.split(" ")
         let line = ""
         for (let word of words) {
-            if (line.length && line.length + word.length + 1 > chars) { text(line, x, y, color); y += 12; line = word }
+            if (line.length && line.length + word.length + 1 > chars) { text(line, x, y, color); y += 18; line = word }
             else line += (line.length ? " " : "") + word
         }
-        if (line.length) { text(line, x, y, color); y += 12 }
+        if (line.length) { text(line, x, y, color); y += 18 }
         return y
     }
+    function wrappedSmall(s: string, x: number, y: number, color: number, chars: number): number {
+        let words = s.split(" ")
+        let line = ""
+        for (let word of words) {
+            if (line.length && line.length + word.length + 1 > chars) { small(line, x, y, color); y += 13; line = word }
+            else line += (line.length ? " " : "") + word
+        }
+        if (line.length) { small(line, x, y, color); y += 13 }
+        return y
+    }
+    // Presentation owns these pixels only. Physics continues in logical 160 x 120.
+    const worldX = 152
+    const worldY = 88
+    const worldScale = 3
+    const arenaThemes = [1, 1, 2, 1, 3, 2]
+    const arenaPlaces = ["ASSEMBLY HALL", "SUPPORT WING", "SERVICE DECK", "MARKSMAN GALLERY", "COLONY APPROACH", "REACTOR FORMATION"]
+    let arenaFloor: Image = null
+    let cachedArena = -1
     function bar(x: number, y: number, w: number, value: number, maximum: number, color: number): void {
-        screen.fillRect(x, y, w, 3, 15)
-        if (maximum > 0) screen.fillRect(x, y, Math.round(w * Math.constrain(value / maximum, 0, 1)), 3, color)
+        screen.fillRect(x, y, w, 5, 15)
+        if (maximum > 0) screen.fillRect(x, y, Math.round(w * Math.constrain(value / maximum, 0, 1)), 5, color)
+    }
+    function panel(x: number, y: number, w: number, h: number): void {
+        screen.fillRect(x, y, w, h, 12)
+        screen.drawRect(x, y, w, h, 11)
+        screen.drawLine(x + 1, y + 1, x + w - 2, y + 1, 3)
+    }
+    function prepareArena(): void {
+        if (arenaFloor && cachedArena == battle) return
+        if (!arenaFloor) arenaFloor = image.create(480, 360)
+        cachedArena = battle
+        let theme = arenaThemes[battle]
+        let floorTile = robotArt.tile(theme, 0)
+        let alternateTile = robotArt.tile(theme, 1)
+        let rimTile = robotArt.tile(theme, 3)
+        // Border is outside the unchanged walkable bounds. Floor motifs are flat paint.
+        for (let y = 0; y < 360; y++) for (let x = 0; x < 480; x++) {
+            let rim = x < 24 || x > 456 || y < 60 || y > 336
+            let alternate = battle == 0 ? Math.idiv(y, 32) % 4 == 0 : battle == 1 ? Math.idiv(x, 32) % 4 == 1 : battle == 2 ? (Math.idiv(x, 32) + Math.idiv(y, 32)) % 4 == 0 : battle == 3 ? x > 224 && x < 256 : battle == 4 ? y > 158 && y < 224 : x > 176 && x < 304
+            let tile = rim ? rimTile : alternate ? alternateTile : floorTile
+            arenaFloor.setPixel(x, y, tile.getPixel(x % 32, y % 32))
+        }
+        // Wall pixels match exactly the rectangles used by movement and line of sight.
+        let wallTile = robotArt.tile(theme, 2)
+        for (let r of walls) {
+            let left = r[0] * 3; let top = r[1] * 3
+            let width = (r[2] - r[0]) * 3 + 1; let height = (r[3] - r[1]) * 3 + 1
+            for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) arenaFloor.setPixel(left + x, top + y, wallTile.getPixel(x % 32, y % 32))
+            arenaFloor.drawRect(left, top, width, height, 3)
+        }
+        // Props remain on the inaccessible upper rim; never invent cover on the floor.
+        let prop = robotArt.prop(theme, battle % 3)
+        if (prop && prop.height <= 56) arenaFloor.drawTransparentImage(prop, 236 - Math.idiv(prop.width, 2), 2)
+        arenaFloor.drawRect(24, 60, 433, 277, 11)
+    }
+    function actorShape(x: number, y: number, side: number, selected: boolean): void {
+        let color = selected ? 5 : side == 0 ? 9 : 2
+        if (side == 0) screen.drawRect(x - 11, y - 4, 23, 9, color)
+        else { screen.drawLine(x, y - 7, x + 12, y, color); screen.drawLine(x + 12, y, x, y + 7, color); screen.drawLine(x, y + 7, x - 12, y, color); screen.drawLine(x - 12, y, x, y - 7, color) }
+        if (selected) screen.drawCircle(x, y, 17, 5)
+    }
+    function portrait(side: number, kind: number, x: number, y: number, dead: boolean = false): void {
+        screen.drawTransparentImage(robotArt.frame(side, kind, dead ? 3 : 0, 0, side == 1), x, y)
     }
     function drawBot(b: Bot, selected: boolean): void {
-        let x = Math.round(b.x * 2); let y = Math.round(b.y * 2)
-        if (!alive(b)) {
-            screen.drawLine(x - 7, y - 7, x + 7, y + 7, 13); screen.drawLine(x + 7, y - 7, x - 7, y + 7, 13)
-            small("#" + b.id, x - 5, y + 9, 13); return
+        let x = worldX + Math.round(b.x * worldScale)
+        let y = worldY + Math.round(b.y * worldScale)
+        let dead = !alive(b)
+        if (!dead) { screen.fillCircle(x, y, 12, 8); actorShape(x, y, b.side, selected) }
+        let pose = dead ? 3 : b.shot > 0 ? 2 : b.moving ? 1 : 0
+        let step = dead ? Math.min(8, Math.max(0, tick - b.deathTick)) : b.shot > 0 ? 2 - b.shot : b.moving ? Math.idiv(b.visualStep, 2) : Math.idiv(tick, 6)
+        screen.drawTransparentImage(robotArt.frame(b.side, b.kind, pose, step, b.faceLeft), x - 32, y - 56)
+        if (dead) {
+            micro("#" + b.id + " DISABLED", x - 29, y + 7, 14)
+            return
         }
-        let color = b.side == 0 ? 9 : 2
-        screen.fillRect(x - 10, y - 7, 4, 14, 13); screen.fillRect(x + 6, y - 7, 4, 14, 13)
-        if (b.kind == 0) screen.fillCircle(x, y, 8, color)
-        else if (b.kind == 2) { screen.fillRect(x - 8, y - 8, 16, 16, color); screen.drawRect(x - 10, y - 10, 20, 20, 1) }
-        else { screen.fillRect(x - 7, y - 7, 14, 14, color); screen.drawRect(x - 8, y - 8, 16, 16, 1) }
-        let target = byId(b.target)
-        if (alive(target)) {
-            let d = distance(b.x, b.y, target.x, target.y)
-            if (d > 0) {
-                let tx = x + Math.round((target.x - b.x) / d * (b.kind == 3 ? 18 : 12))
-                let ty = y + Math.round((target.y - b.y) / d * (b.kind == 3 ? 18 : 12))
-                screen.drawLine(x, y, tx, ty, b.aim > 0 ? 5 : 1)
-                if (b.shot > 0) { screen.drawLine(tx, ty, Math.round(target.x * 2), Math.round(target.y * 2), 5); screen.fillCircle(tx, ty, 3, 1) }
-            }
+        // Persistent team shape + ID supplement team colors and the source silhouette.
+        screen.fillRect(x - 26, y - 69, 52, 10, 15)
+        micro((b.side == 0 ? "F" : "E") + b.id + " " + classNames[b.kind], x - 24, y - 68, b.side == 0 ? 1 : 2)
+        bar(x - 24, y + 8, 48, b.hp, b.maxHp, 7)
+        bar(x - 24, y + 14, 48, b.shield, b.maxShield, 9)
+        if (b.aim > 0) {
+            bar(x - 24, y + 20, 48, b.aim, b.aimTicks, 5)
         }
-        if (b.hit > 0) { screen.drawLine(x - 12, y - 12, x - 6, y - 6, 1); screen.drawLine(x + 12, y - 12, x + 6, y - 6, 5) }
-        if (b.mode == 3) { screen.drawLine(x - 5, y + 4, x, y + 9, 1); screen.drawLine(x, y + 9, x + 5, y + 4, 1) }
-        if (b.mode == 4) { screen.drawLine(x - 5, y - 4, x, y - 8, 1); screen.drawLine(x, y - 8, x + 5, y - 4, 1) }
-        text(classNames[b.kind].substr(0, 1), x - 3, y - 3, 15)
-        small("#" + b.id, x - 5, y - 18, 1)
-        bar(x - 12, y + 11, 24, b.hp, b.maxHp, 7)
-        bar(x - 12, y + 15, 24, b.shield, b.maxShield, 9)
-        if (selected) { screen.drawCircle(x, y, 14, 5); if (b.aim > 0) bar(x - 12, y + 19, 24, b.aim, b.aimTicks, 5) }
+        if (b.hit > 0) {
+            screen.drawLine(x - 23, y - 37, x - 15, y - 29, 1); screen.drawLine(x - 23, y - 29, x - 15, y - 37, 1)
+            screen.drawLine(x + 15, y - 37, x + 23, y - 29, 5); screen.drawLine(x + 15, y - 29, x + 23, y - 37, 5)
+        }
+        if (b.mode == 3) {
+            let dx = b.faceLeft ? -1 : 1
+            screen.drawLine(x + dx * 21, y - 5, x + dx * 30, y, 1)
+            screen.drawLine(x + dx * 30, y, x + dx * 21, y + 5, 1)
+        }
+        if (b.mode == 4) screen.drawCircle(x, y, 21, 6)
+    }
+    function drawInspector(): void {
+        panel(8, 88, 136, 360)
+        let b = bots[inspected]
+        if (!b) return
+        text("ACTOR " + (b.side == 0 ? "F" : "E") + b.id, 18, 101, 5)
+        portrait(b.side, b.kind, 44, 120, !alive(b))
+        text(classNames[b.kind], 18, 190, 1)
+        small(b.side == 0 ? "YOUR CODE" : "ENEMY POLICY", 18, 208, b.side == 0 ? 9 : 2)
+        text(orderNames[b.mode], 18, 226, 1)
+        small(b.status, 18, 243, 5)
+        text("HP " + Math.round(b.hp) + "/" + b.maxHp, 18, 266, 7)
+        bar(18, 281, 116, b.hp, b.maxHp, 7)
+        text("SH " + Math.round(b.shield) + "/" + b.maxShield, 18, 298, 9)
+        bar(18, 313, 116, b.shield, b.maxShield, 9)
+        small("AIM " + b.aim + "/" + b.aimTicks, 18, 333, 5)
+        small("TARGET #" + b.target, 18, 349, 1)
+        small("ALLY #" + b.ally, 18, 365, 1)
+        let diag = b.side == 1 ? "ENEMY POLICY" : b.duplicates ? "DUPLICATE" : b.diagnostic
+        wrappedSmall(diag, 18, 388, b.side == 0 && (b.diagnostic != "ACCEPTED" || b.duplicates) ? 2 : 1, 18)
+        small("A/Z or <> inspect", 18, 431, 14)
     }
     function drawArena(): void {
+        if (!arenaFloor || cachedArena != battle) prepareArena()
         screen.fill(15)
-        screen.fillRect(6, 37, 308, 201, 11)
-        for (let x = 16; x < 307; x += 16) for (let y = 40; y < 232; y += 16) screen.setPixel(x, y, 13)
-        screen.drawRect(6, 37, 308, 201, 13)
-        for (let r of walls) { screen.fillRect(r[0] * 2, r[1] * 2, (r[2] - r[0]) * 2 + 1, (r[3] - r[1]) * 2 + 1, 13); screen.drawRect(r[0] * 2, r[1] * 2, (r[2] - r[0]) * 2 + 1, (r[3] - r[1]) * 2 + 1, 1) }
-        for (let i = 0; i < bots.length; i++) drawBot(bots[i], i == inspected)
-        screen.fillRect(0, 0, 320, 36, 8)
-        text((isReferenceDemo ? "DEMO " : "") + "B0" + (battle + 1) + "  " + Math.max(0, 45 - Math.idiv(tick, 20)) + "s  " + (scrimmage ? "FREE" : "ELIMINATE ENEMIES"), 5, 2, 1)
-        let b = bots[inspected]
-        if (b) {
-            let diag = b.side == 1 ? "enemy" : b.diagnostic == "ACCEPTED" ? (b.duplicates ? "DUPLICATE" : "valid") : b.diagnostic
-            small("#" + b.id + " " + classNames[b.kind] + " " + orderNames[b.mode] + " " + b.status + " " + diag, 5, 14, b.side == 0 && (b.diagnostic != "ACCEPTED" || b.duplicates > 0) ? 2 : 1)
-            small("HP " + Math.round(b.hp) + "/" + b.maxHp + " SH " + Math.round(b.shield) + "/" + b.maxShield + " aim " + b.aim + "/" + b.aimTicks + " target #" + b.target, 5, 21, 1)
+        screen.drawTransparentImage(arenaFloor, worldX, worldY)
+        // Ground effects precede robots; beams terminate at their shared ground-anchor offset.
+        for (let b of bots) if (alive(b)) {
+            let e = byId(b.target)
+            let x = worldX + Math.round(b.x * 3); let y = worldY + Math.round(b.y * 3) - 28
+            if (e && b.aim > 0 && b.status == "AIMING") {
+                let ex = worldX + Math.round(e.x * 3); let ey = worldY + Math.round(e.y * 3) - 28
+                // Short windup ray cannot imply a hit through a blocked target.
+                screen.drawLine(x, y, x + Math.idiv(ex - x, 4), y + Math.idiv(ey - y, 4), 5)
+            }
+            if (e && b.shot > 0) {
+                let ex = worldX + Math.round(e.x * 3); let ey = worldY + Math.round(e.y * 3) - 28
+                screen.drawLine(x, y, ex, ey, 5); screen.drawLine(x, y + 1, ex, ey + 1, 1)
+            }
         }
-        small("A/Z or < > inspect  B/X pause  CURRENT CODE", 5, 29, 1)
+        // Four actors maximum: allocation-free stable depth order by ground position.
+        let previousY = -999; let previousIndex = -1
+        for (let pass = 0; pass < bots.length; pass++) {
+            let next = -1
+            for (let i = 0; i < bots.length; i++) if ((bots[i].y > previousY || (bots[i].y == previousY && i > previousIndex)) && (next < 0 || bots[i].y < bots[next].y || (bots[i].y == bots[next].y && i < next))) next = i
+            if (next >= 0) { drawBot(bots[next], next == inspected); previousY = bots[next].y; previousIndex = next }
+        }
+        screen.fillRect(0, 0, 640, 80, 8)
+        text((isReferenceDemo ? "REFERENCE / " : "") + "B0" + (battle + 1) + "  " + battleNames[battle], 18, 16, 1)
+        text(arenaPlaces[battle], 18, 39, 3)
+        text(Math.max(0, 45 - Math.idiv(tick, 20)) + "s", 568, 17, 5)
+        small(scrimmage ? "FREE / NO CAMPAIGN CHANGES" : "ELIMINATE ENEMIES / SURVIVOR TIEBREAK AT 45s", 18, 62, 9)
+        drawInspector()
+        screen.fillRect(0, 452, 640, 28, 8)
+        text("A/Z or <> inspect   B/X pause   CURRENT CODE", 16, 461, 1)
         if (screenId == "COUNTDOWN") {
-            screen.fillRect(38, 91, 244, 53, 8); screen.drawRect(38, 91, 244, 53, 1)
-            text("CURRENT CODE DEPLOYING", 59, 104, 1); text("Starting in " + Math.max(1, Math.ceil(countdown / 20)), 100, 123, 5)
+            panel(238, 218, 312, 74)
+            text("CURRENT CODE DEPLOYING", 250, 234, 1)
+            text("Starting in " + Math.max(1, Math.ceil(countdown / 20)), 330, 266, 5)
         }
     }
     function drawTrial(): void {
         let a = trialDescriptors[trialIndex]
         screen.fill(15)
-        text("FROZEN TRIAL - CURRENT CODE", 10, 10, 1)
-        text(trialTargetLabel, 10, 27, 9)
+        panel(8, 8, 624, 82)
+        text("FROZEN TRIAL / CURRENT CODE", 22, 24, 1)
+        text(trialTargetLabel, 22, 52, 9)
         if (!a) return
+        panel(8, 100, 624, 82)
+        text("#" + a[0] + (a[1] ? " Guard" : " Scout") + "   shield " + a[2] + "   gap " + a[3], 22, 116, 1)
+        text("Actual: " + orderNames[trialModes[trialIndex]], 22, 151, 5)
+        text("Target: " + orderNames[trialExpected[trialIndex]], 330, 151, 9)
+        for (let y = 196; y < 388; y += 32) for (let x = 8; x < 632; x += 32) screen.drawTransparentImage(robotArt.tile(0, (Math.idiv(x, 32) + Math.idiv(y, 32)) % 3 == 0 ? 1 : 0), x, y)
         let mode = trialModes[trialIndex]
-        text("#" + a[0] + (a[1] ? " Guard" : " Scout") + " shield " + a[2] + " gap " + a[3], 10, 49, 1)
-        text("Actual " + orderNames[mode], 10, 70, 5)
-        text("Target " + orderNames[trialExpected[trialIndex]], 10, 86, 9)
         let t = Math.min(24, trialAnimation)
-        let x = mode == 2 ? 60 + t * 2 : mode == 3 ? 100 - t * 2 : mode == 4 ? 90 + t : 70
-        let y = 146
-        screen.fillCircle(x, y, 10, 9); text(a[1] ? "G" : "S", x - 3, y - 3, 15)
-        small("#" + a[0], x - 8, y + 16, 1)
-        screen.drawCircle(240, y, 10, 2); small("test target", 217, y + 16, 1)
-        if (mode == 4) { screen.drawRect(137, y - 8, 16, 16, 7); small("support ally", 123, y + 16, 1) }
-        if (mode == 2 && t > 15) screen.drawLine(x + 10, y, 230, y, 5)
-        small("Illustrative order motion; sensors stay frozen.", 10, 188, 1)
-        small("Current callback invoked once per actor. No grade.", 10, 200, 1)
-        text("Decision " + (trialIndex + 1) + "/" + trialModes.length, 10, 218, 9)
+        let x = mode == 2 ? 120 + t * 4 : mode == 3 ? 240 - t * 4 : mode == 4 ? 170 + t * 3 : 150
+        let y = 332
+        actorShape(x, y, 0, true)
+        screen.drawTransparentImage(robotArt.frame(0, a[1] ? 2 : 0, mode == 1 ? 0 : 1, Math.idiv(t, 2), mode == 3), x - 32, y - 56)
+        portrait(1, 0, 512 - 32, y - 56)
+        small("#" + a[0] + " ACTUAL ORDER", x - 34, y + 15, 1)
+        small("TEST TARGET", 481, y + 15, 2)
+        if (mode == 4) { portrait(0, 1, 300, y - 56); small("SUPPORT ALLY", 302, y + 15, 6); screen.drawCircle(x, y, 23, 6) }
+        text("Illustrative order motion; sensors stay frozen.", 22, 403, 1)
+        text("Current callback invoked once per actor. No grade.", 22, 427, 3)
+        text("Decision " + (trialIndex + 1) + "/" + trialModes.length, 22, 457, 9)
     }
     function heading(): string {
         if (screenId == "HUB") return isReferenceDemo ? "REFERENCE DEMO / ROBOT FUNCTIONS" : "ROBOT FUNCTIONS / BASE"
@@ -904,6 +1025,7 @@ namespace arenaLab {
         if (screenId == "RECORD_HELP") return "PROGRESS / CONTROLS / HELP"
         if (screenId == "SAVE_WARNING") return "SAVE RECOVERY"
         if (screenId == "RESET" || screenId == "RESET_FINAL") return isReferenceDemo ? "RESET REFERENCE SESSION?" : "RESET CAMPAIGN?"
+        if (screenId == "CREDITS") return "ART / SOURCE CREDITS"
         if (screenId == "COMPLETION") return "SIX BATTLES COMPLETE"
         if (screenId == "SCRIMMAGE") return "FREE SCRIMMAGE / CURRENT CODE"
         return screenId
@@ -918,124 +1040,167 @@ namespace arenaLab {
         if (screenId == "PAUSE_DETAILS") {
             let b = bots[inspected]
             if (!b) return
-            let rows = ["< > choose actor #" + b.id + " " + classNames[b.kind], "Order: " + orderNames[b.mode], "Request: " + b.diagnostic, "Duplicates: " + b.duplicates, "Action: " + b.status, "HP " + Math.round(b.hp) + "/" + b.maxHp + " Shield " + Math.round(b.shield) + "/" + b.maxShield, "Target #" + b.target + " Ally #" + b.ally, "Aim " + b.aim + "/" + b.aimTicks + " Next shot tick " + b.nextShot]
-            for (let i = 0; i < rows.length; i++) text(rows[i], 10, 57 + i * 16, 1)
+            panel(16, 100, 160, 326)
+            portrait(b.side, b.kind, 64, 132, !alive(b))
+            text("#" + b.id + " " + classNames[b.kind], 35, 215, 1)
+            small("< > choose actor", 35, 245, 9)
+            let rows = ["Order: " + orderNames[b.mode], "Request: " + b.diagnostic, "Duplicates: " + b.duplicates, "Action: " + b.status, "HP " + Math.round(b.hp) + "/" + b.maxHp + " Shield " + Math.round(b.shield) + "/" + b.maxShield, "Target #" + b.target + " Ally #" + b.ally, "Aim " + b.aim + "/" + b.aimTicks, "Next shot tick " + b.nextShot]
+            for (let i = 0; i < rows.length; i++) text(rows[i], 196, 112 + i * 35, 1)
             return
         }
         if (screenId == "TRAIN_REVIEW") {
-            if (!trialModes.length) { text("No run yet. A/Z: return to practice.", 10, 65, 1); return }
+            if (!trialModes.length) { text("No run yet. A/Z: return to practice.", 24, 120, 1); return }
             let i = Math.min(reviewRow, trialModes.length - 1)
             let a = trialDescriptors[i]
-            wrapped(trialRows[i], 10, 58, 1, 37)
-            text("Frozen actor #" + a[0] + (a[1] ? " Guard" : " Scout"), 10, 100, 1)
-            text("Shield " + a[2] + "  enemy gap " + a[3], 10, 118, 1)
-            text("Actual: " + orderNames[trialModes[i]], 10, 140, 5)
-            text("Target: " + orderNames[trialExpected[i]], 10, 158, 9)
-            text("Orders only; Function use ungraded.", 10, 182, 1)
-            small("UP/DOWN decisions  " + (i + 1) + "/" + trialModes.length, 10, 201, 1)
+            wrapped(trialRows[i], 24, 108, 1, 48)
+            portrait(0, a[1] ? 2 : 0, 40, 190)
+            text("Frozen actor #" + a[0] + (a[1] ? " Guard" : " Scout"), 140, 198, 1)
+            text("Shield " + a[2] + "  enemy gap " + a[3], 140, 230, 1)
+            text("Actual: " + orderNames[trialModes[i]], 140, 273, 5)
+            text("Target: " + orderNames[trialExpected[i]], 140, 305, 9)
+            text("Orders only; Function use ungraded.", 24, 366, 1)
+            text("UP/DOWN decisions  " + (i + 1) + "/" + trialModes.length, 24, 414, 9)
             return
         }
-        let rows = screenId == "RESULT_LOG" ? log : helpLines()
-        for (let n = 0; n < 10 && reviewRow + n < rows.length; n++) {
-            let s = rows[reviewRow + n]
-            if (s.length > 48) s = s.substr(0, 48)
-            screen.print(s, 10, 57 + n * 14, 1, image.font5)
+        let rows = screenId == "RESULT_LOG" ? log : screenId == "CREDITS" ? robotArt.credits() : helpLines()
+        for (let n = 0; n < 7 && reviewRow + n < rows.length; n++) wrapped(rows[reviewRow + n], 24, 100 + n * 46, 1, 48)
+        small("UP/DOWN scroll " + (reviewRow + 1) + "/" + rows.length, 24, 431, 9)
+    }
+    function menuLocked(index: number): boolean {
+        if (screenId == "CLASS_PICK") return !licensed(index) || bayClasses[1 - bay] == index
+        if (screenId == "EQUIP_PICK") return index > 0 && (moduleRanks[index - 1] == 0 || bayModules[1 - bay] == index - 1)
+        if (screenId == "HUB") return (index == 6 && !isReferenceDemo && highestCleared < 6) || (index == 4 && isReferenceDemo)
+        if (screenId == "SHOP") return moduleRanks[index] == 2 || highestCleared < (moduleRanks[index] == 0 ? 2 : 3)
+        return false
+    }
+    function rosterPreview(): void {
+        panel(390, 98, 234, 326)
+        if (screenId == "RESULT") {
+            small(outcome + " / ACTUAL ACTORS", 410, 115, outcome == "WIN" ? 7 : 5)
+            for (let i = 0; i < bots.length && i < 4; i++) {
+                let b = bots[i]
+                let x = 420 + (i % 2) * 106; let y = 150 + Math.idiv(i, 2) * 126
+                portrait(b.side, b.kind, x, y, !alive(b))
+                small((b.side == 0 ? "F" : "E") + b.id + " " + classNames[b.kind], x, y + 74, 1)
+                small(alive(b) ? "HP " + Math.round(b.hp) : "DISABLED", x, y + 92, alive(b) ? 7 : 14)
+            }
+            return
         }
-        small("UP/DOWN scroll " + (reviewRow + 1) + "/" + rows.length, 10, 205, 9)
+        if (screenId == "CLASS_PICK") {
+            portrait(0, cursor, 475, 130)
+            text(classNames[cursor], 410, 214, 1)
+            text("HP " + baseHp[cursor] + "  SH " + baseShield[cursor], 410, 240, 9)
+            small("Speed " + baseSpeed[cursor] + " logical px/s", 410, 268, 1)
+            small("Range " + (cursor == 3 ? 32 : 0) + "-" + maxRanges[cursor] + " logical px", 410, 290, 1)
+            small("Aim " + (baseAimTicks[cursor] * 50) + "ms", 410, 312, 5)
+            small("Cooldown " + (cooldowns[cursor] * 50) + "ms", 410, 334, 1)
+            small("Damage " + damage[cursor] + "/hit", 410, 356, 1)
+            small(menuLocked(cursor) ? "LOCKED / OTHER BAY" : "A/Z SELECT THIS CLASS", 410, 393, menuLocked(cursor) ? 14 : 5)
+            return
+        }
+        if (screenId == "SHOP" || screenId == "EQUIP_PICK") {
+            let m = screenId == "SHOP" ? cursor : cursor - 1
+            portrait(0, bayClasses[bay], 476, 126)
+            text(m < 0 ? "No module" : moduleNames[m], 410, 215, 1)
+            if (m >= 0) {
+                let effects = ["I: HP+22 speed-3 / II: HP+36 speed-5", "I: speed+6 shield-8 / II: speed+10 shield-14", "I: aim-2 speed-3 / II: aim-3 speed-5", "I: shield+16 delay2.5s / II: shield+28 delay2s regen8"]
+                wrappedSmall(effects[m], 410, 250, 9, 31)
+                text("Owned rank " + moduleRanks[m], 410, 317, 1)
+                wrappedSmall(menuLocked(cursor) ? "Unavailable: see unlock or other bay." : "A/Z confirm selection", 410, 357, menuLocked(cursor) ? 14 : 5, 31)
+            }
+            return
+        }
+        let selectedBattle = screenId == "BATTLES" || screenId == "SCRIMMAGE" ? cursor : battle
+        text("YOUR TEAM", 410, 115, 9)
+        let firstClass = selectedBattle == 0 && (screenId == "PREVIEW" || screenId == "BATTLES" || screenId == "SCRIM_PREVIEW") ? 1 : bayClasses[0]
+        portrait(0, firstClass, 420, 143)
+        let single = selectedBattle == 0 && (screenId == "PREVIEW" || screenId == "BATTLES" || screenId == "SCRIM_PREVIEW")
+        if (!single) portrait(0, bayClasses[1], 526, 143)
+        small(classNames[firstClass], 432, 218, 1)
+        small(single ? "SINGLE BAY" : !isReferenceDemo && highestCleared == 0 ? "BAY2 LOCKED" : classNames[bayClasses[1]], 523, 218, !isReferenceDemo && highestCleared == 0 ? 14 : 1)
+        let showEnemy = screenId == "PREVIEW" || screenId == "SCRIM_PREVIEW" || screenId == "BATTLES" || screenId == "SCRIMMAGE"
+        if (showEnemy) {
+            small("OPPOSITION / B0" + (selectedBattle + 1), 410, 257, 2)
+            for (let i = 0; i < battleEnemies[selectedBattle].length; i++) {
+                portrait(1, battleEnemies[selectedBattle][i], 420 + i * 106, 284)
+                small(classNames[battleEnemies[selectedBattle][i]], 430 + i * 106, 358, 1)
+            }
+            small(arenaPlaces[selectedBattle], 410, 398, 3)
+        } else {
+            text("CURRENT CODE", 410, 265, 5)
+            wrapped(isReferenceDemo ? "REFERENCE SANDBOX" : "CLEARED " + highestCleared + "/6", 410, 298, 1, 17)
+            small("[ ] FRIENDLY", 410, 354, 9)
+            small("< > ENEMY", 410, 378, 2)
+        }
     }
     function drawMenu(): void {
         screen.fill(15)
-        screen.fillRect(0, 0, 320, 36, 8)
-        text(heading().substr(0, 38), 8, 7, 1)
-        small(isReferenceDemo ? "REFERENCE / NO CAMPAIGN CHANGES  45c" : "CLEARED " + highestCleared + "/6  " + wallet + "c  " + (saveDirty ? "UNSAVED" : "SAVED"), 8, 23, saveDirty ? 2 : 9)
-        let menuY = 60
-        if (screenId == "WELCOME") {
-            wrapped(isReferenceDemo ? "The six reference Functions are supplied. Every arena and class is available. Start with B06: Lancer top, Scout bottom." : "Give your robot a plan. Build and call your first attack Function in the tutorial, test your code, then face the Scout in B01.", 12, 58, 1, 36)
-            wrapped(isReferenceDemo ? "Fights run real R06 code and physics. No campaign changes, payouts or tutorial work verified. Reference team changes last this session." : "The world moves and aims. Your Functions choose its orders. No order means it holds still.", 12, 129, 9, 36)
-            text("A/Z: enter base", 12, 190, 5)
-        } else if (screenId == "RECIPE_INFO") {
-            text(isReferenceDemo ? "Completed R06 reference code supplied" : "Available lesson: R0" + Math.min(6, highestCleared + 1), 12, 57, 9)
-            wrapped(isReferenceDemo ? "This reference player demonstrates all six Functions. Practice scenes use explicit target R06. No tutorial work or learning is verified." : ["Create attack(robot) and call it from the planning event.", "Create protect(robot); select it for Guards.", "Move action selection into planRobot(robot).", "Add retreat(robot) for low shield AND a near enemy.", "Return a Boolean answer from inDanger(robot, shieldLimit).", "Reuse chooseAction with different limit and guardDuty inputs."][Math.min(5, highestCleared)], 12, 82, 1, 36)
-            wrapped(isReferenceDemo ? "Use Practice to inspect current orders, then battle or replay. Build your own Functions in the separate student tutorial." : "Use the tutorial's next lesson link in the same MakeCode project. Keep your earlier Functions. Restart to run edits, then Practice before battle.", 12, 139, 9, 36)
-        } else if (screenId == "SAVE_WARNING") {
-            wrapped(saveWarning, 12, 65, 1, 36); wrapped("A/Z retries save and enters base. B/X continues. Your editable code is separate from this campaign save.", 12, 116, 9, 36)
-        } else if (screenId == "TRAIN_REVIEW" || screenId == "RESULT_LOG" || screenId == "RECORD_HELP" || screenId == "PAUSE_DETAILS") drawDetails()
-        else {
-            if (screenId == "HUB") { text(isReferenceDemo ? "Sandbox: choose any arena; no campaign changes." : highestCleared == 6 ? "All six cleared. Replay and experiment." : "Goal: test your code, then win B0" + Math.min(6, highestCleared + 1), 10, 46, 9); menuY = 65 }
-            if (screenId == "TRAIN_PREVIEW") {
-                text("Current code / scene R0" + lesson + " / target R0" + policyTarget, 10, 46, 9)
-                text("< > target. Your code stays current.", 10, 60, 1)
-                menuY = 81
+        screen.fillRect(0, 0, 640, 80, 8)
+        text(heading(), 20, 18, 1)
+        text(isReferenceDemo ? "REFERENCE / NO CAMPAIGN CHANGES" : "CLEARED " + highestCleared + "/6   " + wallet + "c   " + (saveDirty ? "UNSAVED" : "SAVED"), 20, 49, saveDirty ? 2 : 9)
+        if (screenId == "TRAIN_REVIEW" || screenId == "RESULT_LOG" || screenId == "RECORD_HELP" || screenId == "PAUSE_DETAILS" || screenId == "CREDITS") drawDetails()
+        else if (screenId == "WELCOME" || screenId == "RECIPE_INFO" || screenId == "SAVE_WARNING") {
+            panel(16, 98, 360, 326)
+            rosterPreview()
+            if (screenId == "WELCOME") {
+                wrapped(isReferenceDemo ? "The six reference Functions are supplied. Every arena and class is available. Start with B06: Lancer top, Scout bottom." : "Give your robot a plan. Build and call your first attack Function in the tutorial, test your code, then face the Scout in B01.", 32, 120, 1, 27)
+                wrapped(isReferenceDemo ? "Fights run real R06 code and physics. No campaign changes, payouts or tutorial work verified. Reference team changes last this session." : "The world moves and aims. Your Functions choose its orders. No order means it holds still.", 32, 232, 9, 27)
+                text("A/Z: enter base", 32, 386, 5)
+            } else if (screenId == "RECIPE_INFO") {
+                wrapped(isReferenceDemo ? "Completed R06 reference code supplied" : "Available lesson: R0" + Math.min(6, highestCleared + 1), 32, 120, 9, 27)
+                wrapped(isReferenceDemo ? "This reference player demonstrates all six Functions. Practice scenes use explicit target R06. No tutorial work or learning is verified." : ["Create attack(robot) and call it from the planning event.", "Create protect(robot); select it for Guards.", "Move action selection into planRobot(robot).", "Add retreat(robot) for low shield AND a near enemy.", "Return a Boolean answer from inDanger(robot, shieldLimit).", "Reuse chooseAction with different limit and guardDuty inputs."][Math.min(5, highestCleared)], 32, 173, 1, 27)
+                wrapped(isReferenceDemo ? "Use Practice to inspect current orders, then battle or replay. Build your own Functions in the separate student tutorial." : "Use the tutorial's next lesson link in the same MakeCode project. Keep your earlier Functions. Restart to run edits, then Practice before battle.", 32, 286, 9, 27)
+            } else {
+                wrapped(saveWarning, 32, 124, 1, 27)
+                wrapped("A/Z retries save and enters base. B/X continues. Your editable code is separate from this campaign save.", 32, 240, 9, 27)
             }
-            if (screenId == "TRAIN_RESULT") {
-                text(trialVerdict, 10, 52, 5)
-                text(trialTargetLabel, 10, 69, 1)
-                text("Function use is not auto-graded.", 10, 82, 9)
-                text("Later code can change earlier orders.", 10, 95, 9)
-                menuY = 114
-            }
+        } else {
+            rosterPreview()
+            let menuY = 145
+            if (screenId == "HUB") { wrapped(isReferenceDemo ? "Sandbox: choose any arena; no campaign changes." : highestCleared == 6 ? "All six cleared. Replay and experiment." : "Goal: test your code, then win B0" + Math.min(6, highestCleared + 1), 20, 100, 9, 27); menuY = 145 }
+            if (screenId == "TRAIN_PREVIEW") { text("Scene R0" + lesson + " / target R0" + policyTarget, 20, 104, 9); small("< > target. Your code stays current.", 20, 126, 1); menuY = 164 }
+            if (screenId == "TRAIN_RESULT") { wrapped(trialVerdict, 20, 104, 5, 27); text(trialTargetLabel, 20, 137, 1); small("Function use is not auto-graded.", 20, 164, 9); small("Later code can change earlier orders.", 20, 185, 9); menuY = 233 }
             if (screenId == "PREVIEW" || screenId == "SCRIM_PREVIEW") {
-                let names = ""
-                for (let kind of battleEnemies[battle]) names += (names.length ? " + " : "") + classNames[kind]
-                text("Enemies: " + names, 10, 52, 2)
-                text("45s. Eliminate or win survivor tiebreak.", 10, 70, 1)
-                text(battle == 0 ? "CENTER bay1: supplied Rifle" : "TOP bay1: " + classNames[bayClasses[0]] + " / BOTTOM bay2: " + classNames[bayClasses[1]], 10, 88, 9)
-                text(isReferenceDemo ? "Reference: no campaign changes." : scrimmage ? "Free practice. No credits or record." : "First WIN " + (35 + battle * 5) + "c; retry is free.", 10, 106, 5)
-                text(battle == 3 ? "Try Scout top; close inside32." : battle == 5 ? "Try Lancer top + Scout bottom." : "Valid orders can lose. Retry is free.", 10, 125, 1)
-                small(isReferenceDemo ? "REFERENCE: no campaign changes or tutorial proof." : scrimmage || battle < highestCleared ? "Replay: current code; no new proof required." : "Current-run order proof: " + (behaviorProof[battle] ? "MATCHED" : "Practice R0" + (battle + 1) + " first"), 10, 137, 9)
-                menuY = 146
+                small("45s. Eliminate or win survivor tiebreak.", 20, 105, 1)
+                wrappedSmall(battle == 0 ? "CENTER bay1: supplied Rifle" : "TOP bay1: " + classNames[bayClasses[0]] + " / BOTTOM bay2: " + classNames[bayClasses[1]], 20, 131, 9, 52)
+                wrappedSmall(isReferenceDemo ? "Reference: no campaign changes." : scrimmage ? "Free practice. No credits or record." : "First WIN " + (35 + battle * 5) + "c; retry is free.", 20, 177, 5, 52)
+                wrappedSmall(battle == 3 ? "Try Scout top; close inside32." : battle == 5 ? "Try Lancer top + Scout bottom." : "Valid orders can lose. Retry is free.", 20, 219, 1, 52)
+                wrappedSmall(isReferenceDemo ? "REFERENCE: no campaign changes or tutorial proof." : scrimmage || battle < highestCleared ? "Replay: current code; no new proof required." : "Current-run order proof: " + (behaviorProof[battle] ? "MATCHED" : "Practice R0" + (battle + 1) + " first"), 20, 257, 9, 52)
+                menuY = 291
             }
-            if (screenId == "GARAGE") {
-                text("< > bay. A/Z choose; B/X return.", 10, 47, 1)
-                small("Bay1 " + classNames[bayClasses[0]] + "  Bay2 " + (isReferenceDemo || highestCleared ? classNames[bayClasses[1]] : "LOCKED until B01"), 10, 60, 9)
-                menuY = 84
-            }
-            if (screenId == "SHOP") {
-                text("I after B02. II after B03. Team equips.", 10, 47, 1)
-                menuY = 68
-            }
+            if (screenId == "GARAGE") { text("< > bay    A/Z choose", 20, 104, 1); small("Bay1 " + classNames[bayClasses[0]] + "  Bay2 " + (isReferenceDemo || highestCleared ? classNames[bayClasses[1]] : "LOCKED until B01"), 20, 128, 9); menuY = 180 }
+            if (screenId == "SHOP") { wrapped("I after B02. II after B03. Team equips.", 20, 105, 1, 27); menuY = 165 }
             if (screenId == "RESULT") {
-                text(isReferenceDemo ? "Reference fight: no campaign changes." : "+" + resultGrant + " credits. Wallet " + wallet + "c.", 10, 49, 5)
-                text(outcome == "LOSS" ? "Tactical loss: inspect, edit or re-equip." : outcome == "WIN" ? "Battle WIN is not a Function grade." : "Draw: inspect and retry for free.", 10, 66, 1)
-                if (resultFirst) {
-                    let unlock = ["Guard + second bay; lesson R02", "Rank I shop; lesson R03", "Rank II shop; lesson R04", "Lancer license; lesson R05", "Lesson R06", "Course complete + free scrimmage"][battle]
-                    small("Unlocked: " + unlock, 10, 80, 9)
-                }
-                menuY = 101
+                wrapped(isReferenceDemo ? "Reference fight: no campaign changes." : "+" + resultGrant + " credits. Wallet " + wallet + "c.", 20, 104, 5, 27)
+                wrapped(outcome == "LOSS" ? "Tactical loss: inspect, edit or re-equip." : outcome == "WIN" ? "Battle WIN is not a Function grade." : "Draw: inspect and retry for free.", 20, 151, 1, 27)
+                if (resultFirst) wrapped("Unlocked: " + ["Guard + second bay; lesson R02", "Rank I shop; lesson R03", "Rank II shop; lesson R04", "Lancer license; lesson R05", "Lesson R06", "Course complete + free scrimmage"][battle], 20, 199, 9, 27)
+                menuY = 254
             }
-            if (screenId == "RESET" || screenId == "RESET_FINAL") { wrapped(isReferenceDemo ? "Resets only this reference session. Student campaign saves and your editable Functions stay unchanged." : "Clears game progress, wallet and equipment. Your MakeCode Functions stay in your project.", 10, 51, 1, 36); menuY = 113 }
-            if (screenId == "COMPLETION") { wrapped("Your current Functions command the team. Keep experimenting: change a call, test its consequence, and replay any arena.", 10, 52, 9, 36); menuY = 119 }
-            if (screenId == "CLASS_PICK") {
-                text("Choose class; inspect base profile.", 10, 47, 1)
-                menuY = 76
-            }
+            if (screenId == "RESET" || screenId == "RESET_FINAL") { wrapped(isReferenceDemo ? "Resets only this reference session. Student campaign saves and your editable Functions stay unchanged." : "Clears game progress, wallet and equipment. Your MakeCode Functions stay in your project.", 20, 110, 1, 27); menuY = 253 }
+            if (screenId == "COMPLETION") { wrapped("Your current Functions command the team. Keep experimenting: change a call, test its consequence, and replay any arena.", 20, 110, 9, 27); menuY = 253 }
+            if (screenId == "CLASS_PICK") { wrapped("Choose class; inspect base profile.", 20, 104, 1, 27); menuY = 163 }
             let list = menuItems()
-            let visible = Math.max(1, Math.idiv(210 - menuY, 19))
+            let visible = Math.max(1, Math.idiv(434 - menuY, 44))
             let first = Math.max(0, cursor - visible + 1)
             for (let i = first; i < list.length && i < first + visible; i++) {
-                let y = menuY + (i - first) * 19
-                if (i == cursor) { screen.fillRect(7, y - 4, 306, 18, 8); text(">", 10, y, 5) }
-                text(list[i].substr(0, 35), 26, y, i == cursor ? 1 : 13)
+                let y = menuY + (i - first) * 44
+                let locked = menuLocked(i)
+                if (i == cursor) { screen.fillRect(16, y - 6, 360, 40, 8); screen.drawRect(16, y - 6, 360, 40, 5); text(">", 22, y, 5) }
+                let label = list[i]
+                // Full row names fit; secondary reference state is shown in the header.
+                if (isReferenceDemo && screenId == "BATTLES") label = label.substr(0, label.length - 12)
+                wrapped(label, 40, y, locked ? 14 : i == cursor ? 1 : 3, 26)
+                if (locked) small("!", 362, y + 5, 14)
             }
-            if (list.length > visible) small((cursor + 1) + "/" + list.length + "  UP/DOWN: more choices", 10, 208, 9)
-            if (screenId == "CLASS_PICK") {
-                text("BASE " + classNames[cursor] + "  HP" + baseHp[cursor] + " SH" + baseShield[cursor], 10, 160, 9)
-                text("Speed" + baseSpeed[cursor] + "px/s Range" + (cursor == 3 ? 32 : 0) + "-" + maxRanges[cursor] + "px", 10, 172, 1)
-                text("Aim" + (baseAimTicks[cursor] * 50) + "ms Cooldown" + (cooldowns[cursor] * 50) + "ms", 10, 184, 1)
-                text("Damage" + damage[cursor] + "/hit; one instant shot", 10, 196, 1)
-                text("Base only; modules adjust battles.", 10, 208, 9)
-            }
-            if (screenId == "SHOP") {
-                let effects = ["I: HP+22 speed-3 / II: HP+36 speed-5", "I: speed+6 shield-8 / II: speed+10 shield-14", "I: aim-2 speed-3 / II: aim-3 speed-5", "I: shield+16 delay2.5s / II:+28 delay2s regen8"]
-                small(effects[cursor], 10, 165, 9)
-            }
+            if (list.length > visible) small((cursor + 1) + "/" + list.length + "  UP/DOWN: more choices", 20, 431, 9)
         }
-        screen.fillRect(0, 222, 320, 18, 8)
-        text("ARROWS choose  A/Z select  B/X back", 7, 226, 1)
+        screen.fillRect(0, 452, 640, 28, 8)
+        text("ARROWS choose    A/Z confirm    B/X back", 20, 461, 1)
         if (noticeTicks > 0) {
-            screen.fillRect(5, 179, 310, 40, 8); screen.drawRect(5, 179, 310, 40, 5)
-            wrapped(notice, 11, 185, 1, 36)
-        } else if (saveDirty && screenId != "SAVE_WARNING") small("UNSAVED - Help: retry saving", 8, 215, 2)
+            panel(28, 354, 584, 88)
+            screen.drawRect(28, 354, 584, 88, 5)
+            wrapped(notice, 42, 365, 1, 45)
+        } else if (saveDirty && screenId != "SAVE_WARNING") small("UNSAVED - Help: retry saving", 392, 438, 2)
     }
     //% blockHidden=true
     export function debugState(): string {
@@ -1048,6 +1213,7 @@ namespace arenaLab {
         if (started) return
         started = true
         isReferenceDemo = referenceDemo
+        robotArt.applyPalette()
         load()
         controller.up.onEvent(ControllerButtonEvent.Pressed, function () { moveCursor(-1) })
         controller.down.onEvent(ControllerButtonEvent.Pressed, function () { moveCursor(1) })

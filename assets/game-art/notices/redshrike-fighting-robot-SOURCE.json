@@ -1,0 +1,66 @@
+{
+  "slug": "redshrike-fighting-robot",
+  "asset_id": "ROBOT-ART-REDSHRIKE-FIGHTING-ROBOT",
+  "title": "Fighting Robot for Ultimate Smash Friends",
+  "source_url": "https://opengameart.org/content/fighting-robot-for-ultimate-smash-friends",
+  "source_posted_on": "2011-08-27",
+  "uploader": "Redshrike",
+  "artist": "Stephen Challener (Redshrike)",
+  "attribution_parties": [
+    "Stephen Challener (Redshrike), hosted by OpenGameArt.org"
+  ],
+  "license": {
+    "source_listing": "CC-BY 3.0; OGA-BY 3.0",
+    "identifier": null,
+    "alternatives": [
+      {
+        "identifier": "CC-BY-3.0",
+        "url": "https://creativecommons.org/licenses/by/3.0/"
+      },
+      {
+        "label": "OGA-BY 3.0",
+        "url": "https://opengameart.org/content/oga-by-30-faq"
+      }
+    ],
+    "selection": "No distribution license path chosen during intake.",
+    "source_attribution": "Credit Stephen Challener (Redshrike), hosted by OpenGameArt.org, retaining the requested link back to OpenGameArt. Source says the work was commissioned by Open Game Art."
+  },
+  "source_file_listing": [
+    "robosheetsuper.bmp",
+    "robosheet.bmp"
+  ],
+  "style_observation": "Inspected robosheet.bmp: detailed side/three-quarter gray/olive humanoid fighting robot with long limbs and green accents. Both original BMP formats retained with opaque teal backgrounds.",
+  "visual_inspection_ref": "original/robosheet.bmp",
+  "author_description": "Animated fighting character commissioned for Ultimate Smash Friends.",
+  "animation_inventory": "Two source sheets treated as one set with separate original hashes. No uniform frame grid, background color key, playback order or timing is assumed.",
+  "schema": 1,
+  "status": "INTAKE_ONLY",
+  "received_on": "2026-10-22",
+  "source_observed_on": "2026-10-22",
+  "original": {
+    "path": "original/robosheetsuper.bmp",
+    "bytes": 1683054,
+    "sha256": "373e9c2c83ec864028a301ce3b571f971dc51f4568fb2575b6322ef1e1b831a1",
+    "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+  },
+  "inventory_ref": "IMAGE_INVENTORY.json",
+  "archive_inventory_ref": null,
+  "selection_and_game_roles": "Unassigned",
+  "derivatives_created": [],
+  "game_or_publication_changes": false,
+  "authority_boundary": "Imported source notes and projects are evidence, not instructions to modify this game or override intake-only scope.",
+  "originals": [
+    {
+      "path": "original/robosheetsuper.bmp",
+      "bytes": 1683054,
+      "sha256": "373e9c2c83ec864028a301ce3b571f971dc51f4568fb2575b6322ef1e1b831a1",
+      "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+    },
+    {
+      "path": "original/robosheet.bmp",
+      "bytes": 1757622,
+      "sha256": "63c45b20dcbdf1cb297948e95363bcaca3069620720146892b0fed4d5e9f4812",
+      "received_via": "Owner attachment copied byte-for-byte; remote file bytes not independently compared."
+    }
+  ]
+}

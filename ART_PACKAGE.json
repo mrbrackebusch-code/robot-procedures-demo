@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "path": "assets/game-art/selected-art-source.zip",
+      "sha256": "4349ef4c57a92f9eb9445352862459dd563a6dcb48773bc86792f08471f3ea75"
+    },
+    {
+      "path": "assets/game-art/manifest.json",
+      "sha256": "42a1dab68a68463e651fe74fe7623784ed7c384c3c0fd868d14338151360f87a"
+    },
+    {
+      "path": "tools/build-game-art.py",
+      "sha256": "be2eb454f33d3dfc63a6215d748bd48386820f2ef8bd34e94ad244db67122144"
+    },
+    {
+      "path": "assets/game-art/notices/CC-BY-3.0.txt",
+      "sha256": "e6bc9e9c474700b708f568bac9e5a8a9bcb2b1dad53442f5ba449fcb848b8e76"
+    },
+    {
+      "path": "assets/game-art/notices/CC-BY-4.0.txt",
+      "sha256": "d557539df68e771cc1eedcc91d13f70fca930e508d11eedcafa4b15db49e3744"
+    },
+    {
+      "path": "assets/game-art/notices/CC-BY-SA-3.0.txt",
+      "sha256": "3f941b3b89cf7b8370ceb83cc76d2120d471b58735d8ca60238a751a48d7f72f"
+    },
+    {
+      "path": "assets/game-art/notices/CC-BY-SA-4.0.txt",
+      "sha256": "cde7883b9050a1104f4ac19a1572aafd6e5d7323b68351aaf51fbf4beba54966"
+    },
+    {
+      "path": "assets/game-art/notices/CC0-1.0.txt",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "path": "assets/game-art/notices/GPL-2.0.txt",
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
+    {
+      "path": "assets/game-art/notices/LICENSE_SOURCES.json",
+      "sha256": "b7fa64ecc3d20a100f0ab38867558282ae592c2894a86dae23ab696ab6484726"
+    },
+    {
+      "path": "assets/game-art/notices/amon-animated-robot-SOURCE.json",
+      "sha256": "704e352adb6c8da2b727e55bb99a57152d80306393d261f8e9c8c29602a6cd2f"
+    },
+    {
+      "path": "assets/game-art/notices/basxto-frama-extensions-SOURCE.json",
+      "sha256": "b2d2425486e85276a71e54e27037e633ffba5086f841441187570c7ab9c2a1cb"
+    },
+    {
+      "path": "assets/game-art/notices/basxto-lpc-goes-to-space-SOURCE.json",
+      "sha256": "cd07287b2b47fa6ffa0daabb18dc6e90439211db7f197bf8ea055a90b3aebd42"
+    },
+    {
+      "path": "assets/game-art/notices/bombfire-computer-dude-SOURCE.json",
+      "sha256": "b6ebb32ab964710edb6e7e5f274bfa99ccc66e6e94280a12d116fbdec980a50a"
+    },
+    {
+      "path": "assets/game-art/notices/croomfolk-yurinikolai-modular-64x-SOURCE.json",
+      "sha256": "3d0eacedd2998e7cd11ebc928524b256d602c4217af14d1c93b59c079248f3bf"
+    },
+    {
+      "path": "assets/game-art/notices/davilj-robot-SOURCE.json",
+      "sha256": "c201cdde089794670b15970ec5a9bf1f6c44c03904da0caca55b3381e420c217"
+    },
+    {
+      "path": "assets/game-art/notices/davilj-robot2-SOURCE.json",
+      "sha256": "ae6e27590034f94d24fc1cf4663a9afd679d8d522f47a3da3da2f4b3c86f7564"
+    },
+    {
+      "path": "assets/game-art/notices/imogiagames-redshrike-nes-creatures-SOURCE.json",
+      "sha256": "564a1b2d0398c06634b70ae8548ca294a7c967366e3152d17699c417e29992cb"
+    },
+    {
+      "path": "assets/game-art/notices/platforge-hannah-cohan-robot-SOURCE.json",
+      "sha256": "0f784f5eec09e6078a7431f9ea6ce980231e1c4fadfe19571fe08608b555fdce"
+    },
+    {
+      "path": "assets/game-art/notices/redshrike-fighting-robot-SOURCE.json",
+      "sha256": "1a26bf194d7df59b509bf0424caa81a0b608114d06588aae21ecf437867f5e46"
+    },
+    {
+      "path": "assets/game-art/notices/rubberduck-buch-colony-extended-SOURCE.json",
+      "sha256": "9c9757ab819327d1caddbb451cbc43a6cb4de3e2a55b725524301d3f86fa2c2f"
+    },
+    {
+      "path": "assets/game-art/notices/treadbots_README.txt",
+      "sha256": "0c91bf4bdb99d8d14974d8d4065d287d503189ebefba0454faffc765f4e33c41"
+    }
+  ],
+  "purpose": "Selected corresponding art source, reproducible conversion and original license notices. Maintainer downloads, excluded from MakeCode compilation."
+}
